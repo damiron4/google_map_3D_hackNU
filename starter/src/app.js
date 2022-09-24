@@ -22,20 +22,18 @@ const apiOptions = {
 };
 var markersArray = [];
 var fixPtr = 0;
-const maxSteps = 50;
+const maxSteps = 200;
 var step = 0;
 
-const horizontalAccuracy = 7;
-const verticalAccuracy = 8;
 const confidenceInAccuracy = 0.6827;
 
-import data from './dataset/dev9.json';
+import data from './dataset/dev10.json';
 
 // Extract the selected user's fixes
 var selectedUserFixes = [];
 const path = [];
 for (const fix of data) {
-  if(fix.Identifier == 'Charlie')
+  if(fix.Identifier == 'Tenzing')
   selectedUserFixes.push(fix);
   path.push({lat: fix.Latitude, lng: fix.Longitude});
 }
@@ -43,6 +41,8 @@ for (const fix of data) {
 //     .then(response => response.json())
 //     .then(json => console.log(json));
 
+var horizontalAccuracy = selectedUserFixes[0]["Horizontal accuracy"];
+var verticalAccuracy = selectedUserFixes[0]["Vertical accuracy"];
 var LatStep =  (selectedUserFixes[1]["Latitude"] - selectedUserFixes[0]["Latitude"])/maxSteps;
 var LngStep =  (selectedUserFixes[1]["Longitude"] - selectedUserFixes[0]["Longitude"])/maxSteps;
 var AltStep = 0.000001;
@@ -50,7 +50,7 @@ var AltStep = 0.000001;
 const mapOptions = {
   "tilt": 0,
   "heading": 30, 
-  "zoom": 18,
+  "zoom": 14,
   "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"], altitude: selectedUserFixes[0]["Altitude"]},
   "mapId": "a9c41552dfc27a5"
 }
@@ -131,13 +131,13 @@ webGLOverlayView.onContextRestored = ({gl}) => {
   loader.manager.onLoad = () => {
     renderer.setAnimationLoop(() => {
       map.moveCamera({
-        // "tilt": mapOptions.tilt,
-        // "heading": mapOptions.heading,
+        "tilt": mapOptions.tilt,
+        "heading": mapOptions.heading,
         // "zoom": mapOptions.zoom,
         "center": {lat: mapOptions.center.lat, lng: mapOptions.center.lng}
       });
 
-      if (mapOptions.tilt <= 67.5) {
+      if (mapOptions.tilt < 0) {
         mapOptions.tilt += 0.5;
       } else {
         mapOptions.center.lat += LatStep;
