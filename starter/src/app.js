@@ -14,6 +14,7 @@
 
 import { Loader } from '@googlemaps/js-api-loader';
 import * as THREE from 'three';
+import { Camera, PerspectiveCamera } from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 const apiOptions = {
   "apiKey": "AIzaSyAuB2wpky1mqRPWuFUjxmmfW2ZeLzYgSeo",
@@ -33,41 +34,38 @@ const verticalAccuracy = 8;
 const confidenceInAccuracy = 0.6827;
 
 import data from './dataset/dev8.json';
-console.log(data);
 
+// Extract the selected user's fixes
 var selectedUserFixes = [];
-
+const path = [];
 for (const fix of data) {
   if(fix.Identifier == 'Alice')
   selectedUserFixes.push(fix);
+  path.push({lat: fix.Latitude, lng: fix.Longitude});
 }
-
-console.log(selectedUserFixes);
-
 // fetch('./dataset/dev5.json')
 //     .then(response => response.json())
 //     .then(json => console.log(json));
 
 const mapOptions = {
-  "tilt":0 ,
-  "heading":30, 
+  "tilt": 0,
+  "heading": 30, 
   "zoom": 18,
-  "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"],},
+  "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"], altitude: selectedUserFixes[0]["Altitude"]},
   "mapId": "a9c41552dfc27a5"
 }
-var altiutdeOur = selectedUserFixes[0]["Altitude"];
 
 
 async function initMap() {    
   const mapDiv = document.getElementById("map");
   const apiLoader = new Loader(apiOptions);
-  await apiLoader.load()      
+  await apiLoader.load();
   return new google.maps.Map(mapDiv, mapOptions);
 }
 
 async function initWebGLOverlayView (map) {
 
-  // Create a map instance.
+// Create a map instance.
 //const map = new google.maps.Map(mapDiv, mapOptions);
 let scene, renderer, camera, loader;
 const webGLOverlayView = new google.maps.WebGLOverlayView();
@@ -76,12 +74,12 @@ const webGLOverlayView = new google.maps.WebGLOverlayView();
 webGLOverlayView.onAdd = () => {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera();
+  camera.lookAt(scene.position);
   const ambientLight = new THREE.AmbientLight( 0xffffff, 0.75 ); // soft white light
   scene.add( ambientLight );
   const directionalLight = new THREE.DirectionalLight(0xffffff, 0.25);
   directionalLight.position.set(0.5, -1, 0.5);
   scene.add(directionalLight);
-  
 
   loader = new GLTFLoader();
   const sphere = 'SPHERE.gltf';
@@ -118,17 +116,6 @@ webGLOverlayView.onContextRestored = ({gl}) => {
     ...gl.getContextAttributes(),
   });
   renderer.autoClear = false;
-  
-  // loader.manager.onLoad = () => {
-  //   renderer.setAnimationLoop(() => {
-  //      map.moveObject({
-  //       "center.lng": mapOptions.center.lng,
-  //       "center.lat" :mapOptions.center.lat
-  //     });
-
-  //     
-  //   });
-  // }
 }
 
 // WebGLOverlayView.onStateUpdate = ({gl}) => {
@@ -140,11 +127,11 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
   const latLngAltitudeLiteral = {
     lat: mapOptions.center.lat,
     lng: mapOptions.center.lng,
-    altitude: selectedUserFixes[fixPtr]["Altitude"]
+    altitude: mapOptions.center.altitude
   }
+  const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
 
   // Set the sphere position
-  const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
 
   LatStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Latitude"] - selectedUserFixes[fixPtr]["Latitude"])/maxSteps;
   mapOptions.center.lat += LatStep;
