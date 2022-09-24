@@ -21,20 +21,26 @@ const apiOptions = {
 };
 var markersArray = [];
 
-const horizontalAccuracy = 7
-const verticalAccuracy = 8
-const confidenceInAccuracy = 0.6827
-const altiutdeOur = 60
+const horizontalAccuracy = 7;
+const verticalAccuracy = 8;
+const confidenceInAccuracy = 0.6827;
+const altiutdeOur = 60;
 
+import data from './dataset/dev8.json';
+console.log(data);
 
-import * as data from './dataset/dev1.json';
-//var myData = JSON.parse(data);
-const {obj} = data;
-//console.log(obj[0]);
-// Object.keys(data).forEach(function(prop) {
-//   // `prop` is the property name
-//   // `data[prop]` is the property value
-// }); 
+var selectedUser = [];
+
+for (const fix of data) {
+  if(fix.Identifier == 'Alice')
+  selectedUser.push(fix);
+}
+
+console.log(selectedUser);
+
+// fetch('./dataset/dev5.json')
+//     .then(response => response.json())
+//     .then(json => console.log(json));
 
 const mapOptions = {
   "tilt":0,
