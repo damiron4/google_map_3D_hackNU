@@ -22,7 +22,7 @@ const apiOptions = {
 var markersArray = [];
 var fixPtr = 0;
 var step = 0;
-const maxSteps = 30;
+const maxSteps = 50;
 
 var LatStep = 0.000001;
 var LngStep = 0.000001;
@@ -52,7 +52,7 @@ const mapOptions = {
   "tilt":0 ,
   "heading":30, 
   "zoom": 18,
-  "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"]},
+  "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"],},
   "mapId": "a9c41552dfc27a5"
 }
 var altiutdeOur = selectedUserFixes[0]["Altitude"];
@@ -93,6 +93,7 @@ webGLOverlayView.onAdd = () => {
     sphere_transparent,
     gltf => {
       gltf.scene.scale.set(0.0005 * scaleHorizontal, 0.0005 * scaleHorizontal, 0.0005 * scaleVertical);
+      gltf.scene.translateZ(scaleVertical*0.5);
       scene.add(gltf.scene);
     }
   );
@@ -101,8 +102,8 @@ webGLOverlayView.onAdd = () => {
   loader.load(
     sphere,
     gltf => {
-      gltf.scene.scale.set(scaleHorizontal, scaleHorizontal, scaleVertical);
-      gltf.scene.translateZ(-scaleVertical*0.25);
+      gltf.scene.scale.set(0.5 * scaleHorizontal, 0.5 * scaleHorizontal, 0.5 * scaleVertical);
+      gltf.scene.translateZ(scaleVertical*0.375);
     
       scene.add(gltf.scene);
     }
