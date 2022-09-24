@@ -26,6 +26,16 @@ const verticalAccuracy = 8
 const confidenceInAccuracy = 0.6827
 const altiutdeOur = 60
 
+
+import * as data from './dataset/dev1.json';
+//var myData = JSON.parse(data);
+const {obj} = data;
+//console.log(obj[0]);
+// Object.keys(data).forEach(function(prop) {
+//   // `prop` is the property name
+//   // `data[prop]` is the property value
+// }); 
+
 const mapOptions = {
   "tilt":0,
   "heading":0, 
@@ -85,19 +95,12 @@ webGLOverlayView.onContextRestored = ({gl}) => {
   
   // loader.manager.onLoad = () => {
   //   renderer.setAnimationLoop(() => {
-  //      map.moveCamera({
-  //       "tilt": mapOptions.tilt,
-  //       "heading": mapOptions.heading,
-  //       "zoom": mapOptions.zoom
+  //      map.moveObject({
+  //       "center.lng": mapOptions.center.lng,
+  //       "center.lat" :mapOptions.center.lat
   //     });
 
-  //     // if (mapOptions.tilt < 15.5) {
-  //     //   mapOptions.tilt += 0.5
-  //     // } else if (mapOptions.heading <= 360) {
-  //     //   mapOptions.heading += 0.2;
-  //     // } else {
-  //     //   renderer.setAnimationLoop(null)
-  //     // }
+  //     
   //   });
   // }
 }
@@ -112,10 +115,16 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
     lat: mapOptions.center.lat,
     lng: mapOptions.center.lng,
     altitude: altiutdeOur
+    
 
   }
 
   const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
+  if (mapOptions.center.lng < 1) {
+          mapOptions.center.lng += 0.0000001;
+        }  if (mapOptions.center.lat <= 51.6) {
+          mapOptions.center.lat += 0.0000001;
+        }
   camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
 
   // Render objects.
