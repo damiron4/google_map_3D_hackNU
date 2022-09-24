@@ -20,7 +20,11 @@ const apiOptions = {
   "version": "beta"
 };
 var markersArray = [];
-var fixIterator = 0;
+var fixPtr = 0;
+var step = 0;
+const maxSteps = 30;
+var LatStep = 0.000001;
+var LngStep = 0.000001;
 const horizontalAccuracy = 7;
 const verticalAccuracy = 8;
 const confidenceInAccuracy = 0.6827;
@@ -125,30 +129,18 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
 
   // Set the sphere position
   const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
-  var arrived = true;
 
-  if (Math.abs(mapOptions.center.lat - selectedUserFixes[fixIterator]["Latitude"]) > 0.000001) {
-    if (mapOptions.center.lat > selectedUserFixes[fixIterator]["Latitude"]) {
-      mapOptions.center.lat -= 0.0000005;
-    }
-    else {
-      mapOptions.center.lat += 0.0000005;
-    }
-    arrived = false;
+  LatStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Latitude"] - selectedUserFixes[fixPtr]["Latitude"])/maxSteps;
+  mapOptions.center.lat += LatStep;
+
+  LngStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Longitude"] - selectedUserFixes[fixPtr]["Longitude"])/maxSteps;
+  mapOptions.center.lng += LngStep;
+  step++;
+  if(step >= maxSteps) {
+    fixPtr++;
+    step = 0;
   }
-
-  if (Math.abs(mapOptions.center.lng - selectedUserFixes[fixIterator]["Longitude"]) > 0.000001) {
-    if (mapOptions.center.lng > selectedUserFixes[fixIterator]["Longitude"]) {
-      mapOptions.center.lng -= 0.0000005;
-    }
-    else {
-      mapOptions.center.lng += 0.0000005;
-    }
-    arrived = false;
-  }
-
-  if(arrived) fixIterator++;
-  if(fixIterator>=selectedUserFixes.length) fixIterator = 0;
+  if(fixPtr>=selectedUserFixes.length) fixPtr = 0;
 
   camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
 
