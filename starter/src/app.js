@@ -21,6 +21,11 @@ const apiOptions = {
 };
 var markersArray = [];
 
+const horizontalAccuracy = 7
+const verticalAccuracy = 8
+const confidenceInAccuracy = 0.6827
+const altiutdeOur = 60
+
 const mapOptions = {
   "tilt":0,
   "heading":0, 
@@ -62,8 +67,8 @@ webGLOverlayView.onAdd = () => {
   loader.load(
     source2,
     gltf => {
-      gltf.scene.scale.set(0.01*1.2,0.01*1.2,0.01*0.5);
-      gltf.scene.rotation.x = 180 * Math.PI/180;
+      gltf.scene.scale.set(0.0005*(horizontalAccuracy/confidenceInAccuracy),0.0005*(horizontalAccuracy/confidenceInAccuracy),0.0005*(verticalAccuracy/confidenceInAccuracy));
+    
       scene.add(gltf.scene);
     }
   );
@@ -106,7 +111,7 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
   const latLngAltitudeLiteral = {
     lat: mapOptions.center.lat,
     lng: mapOptions.center.lng,
-    altitude: 60.63483719
+    altitude: altiutdeOur
 
   }
 
