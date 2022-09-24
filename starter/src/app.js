@@ -22,30 +22,30 @@ const apiOptions = {
 };
 var markersArray = [];
 var fixPtr = 0;
-var step = 0;
 const maxSteps = 50;
-
-var LatStep = 0.000001;
-var LngStep = 0.000001;
-var AltStep = 0.000001;
+var step = 0;
 
 const horizontalAccuracy = 7;
 const verticalAccuracy = 8;
 const confidenceInAccuracy = 0.6827;
 
-import data from './dataset/dev8.json';
+import data from './dataset/dev9.json';
 
 // Extract the selected user's fixes
 var selectedUserFixes = [];
 const path = [];
 for (const fix of data) {
-  if(fix.Identifier == 'Alice')
+  if(fix.Identifier == 'Charlie')
   selectedUserFixes.push(fix);
   path.push({lat: fix.Latitude, lng: fix.Longitude});
 }
 // fetch('./dataset/dev5.json')
 //     .then(response => response.json())
 //     .then(json => console.log(json));
+
+var LatStep =  (selectedUserFixes[1]["Latitude"] - selectedUserFixes[0]["Latitude"])/maxSteps;
+var LngStep =  (selectedUserFixes[1]["Longitude"] - selectedUserFixes[0]["Longitude"])/maxSteps;
+var AltStep = 0.000001;
 
 const mapOptions = {
   "tilt": 0,
@@ -55,12 +55,23 @@ const mapOptions = {
   "mapId": "a9c41552dfc27a5"
 }
 
-
-async function initMap() {    
+async function initMap() {
   const mapDiv = document.getElementById("map");
   const apiLoader = new Loader(apiOptions);
   await apiLoader.load();
-  return new google.maps.Map(mapDiv, mapOptions);
+  const map = new google.maps.Map(mapDiv, mapOptions);
+
+  // const path = new google.maps.Polyline({
+  //   path: path,
+  //   geodesic: true,
+  //   strokeColor: "#0000FF",
+  //   strokeOpacity: 0.4,
+  //   strokeWeight: 2
+  // });
+
+  // path.setMap(map);
+
+  return map;
 }
 
 async function initWebGLOverlayView (map) {
@@ -116,6 +127,30 @@ webGLOverlayView.onContextRestored = ({gl}) => {
     ...gl.getContextAttributes(),
   });
   renderer.autoClear = false;
+
+  loader.manager.onLoad = () => {
+    renderer.setAnimationLoop(() => {
+      map.moveCamera({
+        // "tilt": mapOptions.tilt,
+        // "heading": mapOptions.heading,
+        // "zoom": mapOptions.zoom,
+        "center": {lat: mapOptions.center.lat, lng: mapOptions.center.lng}
+      });
+
+      if (mapOptions.tilt <= 67.5) {
+        mapOptions.tilt += 0.5;
+      } else {
+        mapOptions.center.lat += LatStep;
+        mapOptions.center.lng += LngStep;
+        step++;
+        if(step >= maxSteps) {
+          fixPtr = (fixPtr + 1) % selectedUserFixes.length;
+          step = 0;
+          LatStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Latitude"] - selectedUserFixes[fixPtr]["Latitude"])/maxSteps;
+          LngStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Longitude"] - selectedUserFixes[fixPtr]["Longitude"])/maxSteps;
+      }}
+     } );
+  }
 }
 
 // WebGLOverlayView.onStateUpdate = ({gl}) => {
@@ -131,23 +166,22 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
   }
   const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
 
-  // Set the sphere position
+  // Sphere Animation
+  // LatStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Latitude"] - selectedUserFixes[fixPtr]["Latitude"])/maxSteps;
+  // mapOptions.center.lat += LatStep;
 
-  LatStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Latitude"] - selectedUserFixes[fixPtr]["Latitude"])/maxSteps;
-  mapOptions.center.lat += LatStep;
+  // LngStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Longitude"] - selectedUserFixes[fixPtr]["Longitude"])/maxSteps;
+  // mapOptions.center.lng += LngStep;
 
-  LngStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Longitude"] - selectedUserFixes[fixPtr]["Longitude"])/maxSteps;
-  mapOptions.center.lng += LngStep;
+  // AltStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Altitude"] - selectedUserFixes[fixPtr]["Altitude"])/maxSteps;
+  // mapOptions.center.altitude += AltStep;
 
-  AltStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Altitude"] - selectedUserFixes[fixPtr]["Altitude"])/maxSteps;
-  mapOptions.center.altitude += AltStep;
-
-  step++;
-  if(step >= maxSteps) {
-    fixPtr++;
-    step = 0;
-  }
-  if(fixPtr>=selectedUserFixes.length) fixPtr = 0;
+  // step++;
+  // if(step >= maxSteps) {
+  //   fixPtr++;
+  //   step = 0;
+  // }
+  // if(fixPtr>=selectedUserFixes.length) fixPtr = 0;
 
   camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
 
