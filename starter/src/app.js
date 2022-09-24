@@ -43,7 +43,7 @@ console.log(selectedUser);
 //     .then(json => console.log(json));
 
 const mapOptions = {
-  "tilt":0,
+  "tilt":30 ,
   "heading":0, 
   "zoom": 19,
   "center": { lat: 51.50452146, lng: -0.086503248},
@@ -78,10 +78,10 @@ webGLOverlayView.onAdd = () => {
 
   loader = new GLTFLoader();
   const source = 'pin.gltf';
-  const source2 = 'sphere-transparent.gltf';
+  const sphere_transparent = 'sphere-transparent.gltf';
   
   loader.load(
-    source2,
+    sphere_transparent,
     gltf => {
       gltf.scene.scale.set(0.0005*(horizontalAccuracy/confidenceInAccuracy),0.0005*(horizontalAccuracy/confidenceInAccuracy),0.0005*(verticalAccuracy/confidenceInAccuracy));
     
