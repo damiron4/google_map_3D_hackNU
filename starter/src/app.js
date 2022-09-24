@@ -20,7 +20,7 @@ const apiOptions = {
   "version": "beta"
 };
 var markersArray = [];
-
+var fixIterator = 0;
 const horizontalAccuracy = 7;
 const verticalAccuracy = 8;
 const confidenceInAccuracy = 0.6827;
@@ -29,14 +29,14 @@ const altiutdeOur = 60;
 import data from './dataset/dev8.json';
 console.log(data);
 
-var selectedUser = [];
+var selectedUserFixes = [];
 
 for (const fix of data) {
   if(fix.Identifier == 'Alice')
-  selectedUser.push(fix);
+  selectedUserFixes.push(fix);
 }
 
-console.log(selectedUser);
+console.log(selectedUserFixes);
 
 // fetch('./dataset/dev5.json')
 //     .then(response => response.json())
@@ -46,7 +46,7 @@ const mapOptions = {
   "tilt":30 ,
   "heading":0, 
   "zoom": 19,
-  "center": { lat: 51.50452146, lng: -0.086503248},
+  "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"]},
   "mapId": "a9c41552dfc27a5"
 }
 
@@ -121,16 +121,35 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
     lat: mapOptions.center.lat,
     lng: mapOptions.center.lng,
     altitude: altiutdeOur
-    
-
   }
 
+  // Set the sphere position
   const matrix = transformer.fromLatLngAltitude(latLngAltitudeLiteral);
-  if (mapOptions.center.lng < 1) {
-          mapOptions.center.lng += 0.0000001;
-        }  if (mapOptions.center.lat <= 51.6) {
-          mapOptions.center.lat += 0.0000001;
-        }
+  var arrived = true;
+
+  if (Math.abs(mapOptions.center.lat - selectedUserFixes[fixIterator]["Latitude"]) > 0.000001) {
+    if (mapOptions.center.lat > selectedUserFixes[fixIterator]["Latitude"]) {
+      mapOptions.center.lat -= 0.0000005;
+    }
+    else {
+      mapOptions.center.lat += 0.0000005;
+    }
+    arrived = false;
+  }
+
+  if (Math.abs(mapOptions.center.lng - selectedUserFixes[fixIterator]["Longitude"]) > 0.000001) {
+    if (mapOptions.center.lng > selectedUserFixes[fixIterator]["Longitude"]) {
+      mapOptions.center.lng -= 0.0000005;
+    }
+    else {
+      mapOptions.center.lng += 0.0000005;
+    }
+    arrived = false;
+  }
+
+  if(arrived) fixIterator++;
+  if(fixIterator>=selectedUserFixes.length) fixIterator = 0;
+
   camera.projectionMatrix = new THREE.Matrix4().fromArray(matrix);
 
   // Render objects.
