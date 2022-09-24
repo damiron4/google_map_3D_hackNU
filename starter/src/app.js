@@ -23,12 +23,14 @@ var markersArray = [];
 var fixPtr = 0;
 var step = 0;
 const maxSteps = 30;
+
 var LatStep = 0.000001;
 var LngStep = 0.000001;
+var AltStep = 0.000001;
+
 const horizontalAccuracy = 7;
 const verticalAccuracy = 8;
 const confidenceInAccuracy = 0.6827;
-const altiutdeOur = 60;
 
 import data from './dataset/dev8.json';
 console.log(data);
@@ -47,12 +49,13 @@ console.log(selectedUserFixes);
 //     .then(json => console.log(json));
 
 const mapOptions = {
-  "tilt":30 ,
-  "heading":0, 
-  "zoom": 19,
+  "tilt":0 ,
+  "heading":30, 
+  "zoom": 18,
   "center": { lat: selectedUserFixes[0]["Latitude"], lng: selectedUserFixes[0]["Longitude"]},
   "mapId": "a9c41552dfc27a5"
 }
+var altiutdeOur = selectedUserFixes[0]["Altitude"];
 
 
 async function initMap() {    
@@ -124,7 +127,7 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
   const latLngAltitudeLiteral = {
     lat: mapOptions.center.lat,
     lng: mapOptions.center.lng,
-    altitude: altiutdeOur
+    altitude: selectedUserFixes[fixPtr]["Altitude"]
   }
 
   // Set the sphere position
@@ -135,6 +138,10 @@ webGLOverlayView.onDraw = ({gl, transformer}) => {
 
   LngStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Longitude"] - selectedUserFixes[fixPtr]["Longitude"])/maxSteps;
   mapOptions.center.lng += LngStep;
+
+  AltStep =  (selectedUserFixes[(fixPtr + 1) % selectedUserFixes.length]["Altitude"] - selectedUserFixes[fixPtr]["Altitude"])/maxSteps;
+  mapOptions.center.altitude += AltStep;
+
   step++;
   if(step >= maxSteps) {
     fixPtr++;
