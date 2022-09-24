@@ -84,13 +84,25 @@ webGLOverlayView.onAdd = () => {
   
 
   loader = new GLTFLoader();
-  const source = 'pin.gltf';
+  const sphere = 'SPHERE.gltf';
   const sphere_transparent = 'sphere-transparent.gltf';
-  
+  const scaleHorizontal = horizontalAccuracy/confidenceInAccuracy;
+  const scaleVertical = verticalAccuracy/confidenceInAccuracy;
+  // Load transparent sphere
   loader.load(
     sphere_transparent,
     gltf => {
-      gltf.scene.scale.set(0.0005*(horizontalAccuracy/confidenceInAccuracy),0.0005*(horizontalAccuracy/confidenceInAccuracy),0.0005*(verticalAccuracy/confidenceInAccuracy));
+      gltf.scene.scale.set(0.0005 * scaleHorizontal, 0.0005 * scaleHorizontal, 0.0005 * scaleVertical);
+      scene.add(gltf.scene);
+    }
+  );
+  
+  // Load small sphere
+  loader.load(
+    sphere,
+    gltf => {
+      gltf.scene.scale.set(scaleHorizontal, scaleHorizontal, scaleVertical);
+      gltf.scene.translateZ(-scaleVertical*0.25);
     
       scene.add(gltf.scene);
     }
