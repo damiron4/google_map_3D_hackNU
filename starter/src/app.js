@@ -85,17 +85,17 @@ function setMapOptions(height) {
   }
   if (height >= 120) {
     mapOptions.tilt = 70;
-    mapOptions.zoom = 18;
+    mapOptions.zoom = 17;
     return;
   }
   if (height >= 60) {
     mapOptions.tilt = 90;
-    mapOptions.zoom = 19;
+    mapOptions.zoom = 18;
     return;
   }
   if (height >= 40) {
-    mapOptions.tilt = 90;
-    mapOptions.zoom = 20;
+    mapOptions.tilt = 30;
+    mapOptions.zoom = 19;
     return;
   }
   if (height >= 20) {
@@ -113,7 +113,7 @@ var step = 0;
 const maxSteps = 100;
 const confidenceInAccuracy = 0.6827;
 
-import data from './dataset/dev10.json';
+import data from './dataset/prod3.json';
 
 var selectedUserFixes = [];
 // Extract the selected user's fixes

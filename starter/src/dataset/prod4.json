@@ -1,0 +1,62 @@
+[
+    {
+      "Latitude": 51.5135107900948,
+      "Longitude": -0.0888534419597097,
+      "Altitude": 0.5594331154535,
+      "Identifier": "Jane",
+      "Timestamp": 82993,
+      "Floor label": null,
+      "Horizontal accuracy": 16.32932,
+      "Vertical accuracy": 2.49292,
+      "Confidence in location accuracy": 0.6827,
+      "Activity": "running"
+    },
+    {
+      "Latitude": 51.5133863291639,
+      "Longitude": -0.0863440688966077,
+      "Altitude": 0.3849604019824,
+      "Identifier": "Jane",
+      "Timestamp": 262939,
+      "Floor label": null,
+      "Horizontal accuracy": 12.294942,
+      "Vertical accuracy": 2.953,
+      "Confidence in location accuracy": 0.6827,
+      "Activity": "running"
+    },
+    {
+      "Latitude": 51.5134621768302,
+      "Longitude": -0.0840583250016191,
+      "Altitude": 2.0794453358062,
+      "Identifier": "Jane",
+      "Timestamp": 452781,
+      "Floor label": null,
+      "Horizontal accuracy": 13.29402,
+      "Vertical accuracy": 2.0129132,
+      "Confidence in location accuracy": 0.6827,
+      "Activity": "running"
+    },
+    {
+      "Latitude": 51.5147150780882,
+      "Longitude": -0.0830116612881193,
+      "Altitude": 0.260566345049,
+      "Identifier": "Jane",
+      "Timestamp": 692301,
+      "Floor label": null,
+      "Horizontal accuracy": 17.328239,
+      "Vertical accuracy": 2.0558393,
+      "Confidence in location accuracy": 0.6827,
+      "Activity": "running"
+    },
+    {
+      "Latitude": 51.5157191613679,
+      "Longitude": -0.0819220859718583,
+      "Altitude": -1.1467619400101,
+      "Identifier": "Jane",
+      "Timestamp": 932813,
+      "Floor label": null,
+      "Horizontal accuracy": 12.329842,
+      "Vertical accuracy": 2.9503032,
+      "Confidence in location accuracy": 0.6827,
+      "Activity": "running"
+    }
+]
